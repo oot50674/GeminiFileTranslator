@@ -19,7 +19,7 @@
 
 ### 실행 파일 다운로드 (권장)
 
-1. [릴리스 페이지]에서 최신 버전의 `GeminiFileTranslator.exe` 파일을 다운로드합니다.
+1. [릴리스 페이지](https://github.com/oot50674/GeminiFileTranslator/releases)에서 최신 버전의 `GeminiFileTranslator.exe` 파일을 다운로드합니다.
 2. 다운로드한 실행 파일을 더블 클릭하여 실행합니다.
 
 
