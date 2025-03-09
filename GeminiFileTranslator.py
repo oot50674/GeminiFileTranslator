@@ -380,7 +380,15 @@ class TranslationApp(QMainWindow):
         
         file_layout.addLayout(path_layout)
         
-        # 파일 탐색 설정
+        # 제외 확장자 설정 (한 줄 전체 사용)
+        exclude_ext_layout = QHBoxLayout()
+        exclude_ext_layout.addWidget(QLabel("번역에서 제외할 확장자:"))
+        self.exclude_extensions_input = QLineEdit()
+        self.exclude_extensions_input.setPlaceholderText("예: jpg,png,mp3,wav (쉼표로 구분)")
+        exclude_ext_layout.addWidget(self.exclude_extensions_input, 1)
+        file_layout.addLayout(exclude_ext_layout)
+        
+        # 파일 탐색 설정 (체크박스들을 한 줄에 배치)
         file_settings_layout = QHBoxLayout()
         
         # 하위 폴더 설정
@@ -393,14 +401,8 @@ class TranslationApp(QMainWindow):
         self.translate_folders_checkbox.setChecked(False)
         file_settings_layout.addWidget(self.translate_folders_checkbox)
         
-        # 제외 확장자 설정 (여기로 통합)
-        exclude_ext_layout = QHBoxLayout()
-        exclude_ext_layout.addWidget(QLabel("번역에서 제외할 확장자:"))
-        self.exclude_extensions_input = QLineEdit()
-        self.exclude_extensions_input.setPlaceholderText("예: jpg,png,mp3,wav (쉼표로 구분)")
-        exclude_ext_layout.addWidget(self.exclude_extensions_input, 1)
-        
-        file_settings_layout.addLayout(exclude_ext_layout)
+        # 나머지 공간을 채우기 위한 스트레치 추가
+        file_settings_layout.addStretch(1)
         
         file_layout.addLayout(file_settings_layout)
         
