@@ -1,5 +1,6 @@
 # GeminiFileTranslator
-![image](https://github.com/user-attachments/assets/dba057a2-b5d8-48af-8c8b-6283f5b155be)
+![image](https://github.com/user-attachments/assets/75d7207a-38b5-4875-9f3c-ff1583c70b5a)
+
 
 
 ## 소개
