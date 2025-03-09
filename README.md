@@ -25,7 +25,7 @@
 
 ## 사용 방법
 
-1. Google Gemini API 키를 발급받습니다 ([Google AI Studio](https://aistudio.google.com/))
+1. Google Gemini API 키를 발급받습니다 ([Google AI Studio](https://aistudio.google.com/)) (무료 api로도 일반적인 사용에 충분합니다.)
 2. 애플리케이션을 실행하고 API 키를 입력합니다
 3. 번역할 파일이 있는 폴더 경로를 지정합니다
 4. 번역 설정을 조정합니다:
