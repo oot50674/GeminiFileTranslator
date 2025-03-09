@@ -39,25 +39,43 @@ class TranslationThread(QThread):
         self.custom_prompt = custom_prompt
         self.templates = {
             'korean': """
-# 저는 번역 애플리케이션의 백엔드 AI입니다. 다음 텍스트를 한국어로 번역해야 합니다.
-- 번역투 대신 가능한 자연스러운 한국어로 번역하세요.
-- 순수한 번역 텍스트만 제공하며 마크다운 형식으로 변경하지 마세요.
-- 번역된 텍스트는 원래의 문단을 가능한 유지하며, 원문에 없는 줄바꿈(\n)을 추가하지 마세요.
-- 번역문 이외의 추가적인 코멘트나 설명을 제외하고, 번역된 텍스트만 제공하세요.
+# 파일명 번역 시스템 프롬프트
+- 이것은 파일명 번역을 위한 AI 시스템입니다.
+- 파일명의 의미를 정확하게 파악하여 한국어로 번역해주세요.
+- 파일명에 사용할 수 없는 특수문자(/, \, :, *, ?, ", <, >, |)는 사용하지 마세요.
+- 파일 확장자(.txt, .jpg 등)는 번역하지 않고 그대로 유지하세요.
+- 번역된 파일명은 원래 파일명의 의미를 유지하면서도 한국어 사용자가 이해하기 쉽게 번역하세요.
+- 파일명은 간단명료하게 유지하고, 불필요한 조사나 특수문자를 추가하지 마세요.
+- 번역문 이외의 추가적인 설명이나 코멘트는 제외하고 순수 번역 텍스트만 제공하세요.
+
+사용자 정의 프롬프트:
+{custom_prompt}
 """,
             'english': """
-# I am the backend AI of a translation application. Please translate the following text into English.
-- Provide only the pure translation text.
-- The translated text should maintain the original format and line breaks, without arbitrarily changing to Markdown format.
-- Provide only the translated text, excluding any additional explanations.
-- Translate the entire content without omitting any part of the original text.
+# File Name Translation System Prompt
+- This is an AI system for translating file names.
+- Please accurately understand and translate the meaning of file names into English.
+- Do not use special characters that cannot be used in file names (/, \, :, *, ?, ", <, >, |).
+- Do not translate file extensions (.txt, .jpg, etc.) and keep them as they are.
+- Translate file names to be easily understood by English users while maintaining the original meaning.
+- Keep file names simple and concise, without adding unnecessary articles or special characters.
+- Provide only the translated text, excluding any additional explanations or comments.
+
+Custom User Prompt:
+{custom_prompt}
 """,
             'japanese': """
-# 私は翻訳アプリケーションのバックエンドAIです。次のテキストを日本語に翻訳してください。
-- 純粋な翻訳テキストのみを提供してください。
-- 翻訳されたテキストは元の形式と改行を維持し、任意にMarkdown形式に変更しないでください。
-- 追加の説明を除き、翻訳されたテキストのみを提供してください。
-- 原文の内容を全て含め、何も省略せずに翻訳してください。
+# ファイル名翻訳システムプロンプト
+- これはファイル名を翻訳するためのAIシステムです。
+- ファイル名の意味を正確に理解し、日本語に翻訳してください。
+- ファイル名に使用できない特殊文字(/, \, :, *, ?, ", <, >, |)は使用しないでください。
+- ファイル拡張子(.txt, .jpg など)は翻訳せず、そのまま維持してください。
+- 翻訳されたファイル名は、元のファイル名の意味を保ちながら、日本語ユーザーが理解しやすいように翻訳してください。
+- ファイル名はシンプルで簡潔に保ち、不要な助詞や特殊文字を追加しないでください。
+- 翻訳文以外の追加説明やコメントを除き、純粋な翻訳テキストのみを提供してください。
+
+カスタムユーザープロンプト:
+{custom_prompt}
 """
         }
     
@@ -80,8 +98,9 @@ class TranslationThread(QThread):
                 safety_settings=safety_settings
             )
             
-            # 번역 템플릿 선택 (사용자 정의 프롬프트가 있으면 사용)
-            template = self.custom_prompt if self.custom_prompt else self.templates.get(self.language.lower(), self.templates['korean'])
+            # 번역 템플릿 선택 (사용자 정의 프롬프트를 기본 템플릿에 추가)
+            base_template = self.templates.get(self.language.lower(), self.templates['korean'])
+            template = base_template.format(custom_prompt=self.custom_prompt if self.custom_prompt else "사용자 정의 프롬프트가 없습니다.")
             
             # 결과 저장 리스트
             all_translations = []
