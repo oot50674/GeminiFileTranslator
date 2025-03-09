@@ -195,7 +195,10 @@ class RenameThread(QThread):
             files_to_rename = [item for item in self.items_to_rename if item['type'] == 'file']
             folders_to_rename = [item for item in self.items_to_rename if item['type'] == 'folder']
             
-            # 폴더 이름 변경은 마지막에 처리 (파일부터 처리)
+            # 폴더 구조의 깊이에 따라 정렬 (가장 깊은 폴더부터 처리)
+            folders_to_rename.sort(key=lambda folder: folder['original_path'].count(os.sep), reverse=True)
+            
+            # 파일을 먼저 처리한 후 깊이순으로 정렬된 폴더를 처리
             items_to_process = files_to_rename + folders_to_rename
             
             # 이름 변경 처리
@@ -217,15 +220,26 @@ class RenameThread(QThread):
                         logger.warning(f"이름 변경 실패 - 이미 존재하는 경로: {new_path}")
                         continue
                     
-                    # 이름 변경
-                    os.rename(original_path, new_path)
-                    
-                    # 성공 목록에 추가
-                    renamed_items.append({
-                        'original_path': original_path,
-                        'new_path': new_path,
-                        'type': item_type
-                    })
+                    # 이름 변경 시도
+                    try:
+                        os.rename(original_path, new_path)
+                        
+                        # 로그 추가 (폴더 구조 추적을 위한 디버깅)
+                        if item_type == 'folder':
+                            logger.info(f"폴더 이름 변경: {original_path} -> {new_path} (깊이: {original_path.count(os.sep)})")
+                        
+                        # 성공 목록에 추가
+                        renamed_items.append({
+                            'original_path': original_path,
+                            'new_path': new_path,
+                            'type': item_type
+                        })
+                    except PermissionError:
+                        logger.error(f"권한 오류: {original_path} - 파일이 사용 중이거나 권한이 없습니다.")
+                    except FileNotFoundError:
+                        logger.error(f"파일을 찾을 수 없음: {original_path}")
+                    except OSError as e:
+                        logger.error(f"OS 오류: {str(e)} - {original_path}")
                     
                     # 처리 간격
                     time.sleep(0.1)  # 시스템 과부하 방지
@@ -1042,6 +1056,10 @@ class TranslationApp(QMainWindow):
         # 폴더와 파일 개수 확인
         renamed_files = [item for item in renamed_items if item['type'] == 'file']
         renamed_folders = [item for item in renamed_items if item['type'] == 'folder']
+        
+        # 상세 로그 추가
+        for folder in renamed_folders:
+            logger.info(f"폴더 이름 변경 완료: {folder['original_path']} -> {folder['new_path']}")
         
         # 상태 업데이트
         status_message = []
