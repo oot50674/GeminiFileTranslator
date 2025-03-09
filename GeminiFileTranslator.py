@@ -353,14 +353,7 @@ class TranslationApp(QMainWindow):
         
         translation_settings_layout.addLayout(chunk_delay_layout)
         
-        # 제외할 확장자 설정
-        exclude_ext_layout = QHBoxLayout()
-        exclude_ext_layout.addWidget(QLabel("번역에서 제외할 확장자:"))
-        self.exclude_extensions_input = QLineEdit()
-        self.exclude_extensions_input.setPlaceholderText("예: jpg,png,mp3,wav (쉼표로 구분)")
-        exclude_ext_layout.addWidget(self.exclude_extensions_input, 1)
-        
-        translation_settings_layout.addLayout(exclude_ext_layout)
+        # 제외할 확장자 설정 제거 (파일 경로 입력 섹션으로 통합)
         
         translation_settings_group.setLayout(translation_settings_layout)
         main_layout.addWidget(translation_settings_group)
@@ -400,7 +393,7 @@ class TranslationApp(QMainWindow):
         self.translate_folders_checkbox.setChecked(False)
         file_settings_layout.addWidget(self.translate_folders_checkbox)
         
-        # 제외 확장자 설정
+        # 제외 확장자 설정 (여기로 통합)
         exclude_ext_layout = QHBoxLayout()
         exclude_ext_layout.addWidget(QLabel("번역에서 제외할 확장자:"))
         self.exclude_extensions_input = QLineEdit()
