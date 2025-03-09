@@ -385,7 +385,9 @@ class TranslationApp(QMainWindow):
         exclude_ext_layout.addWidget(QLabel("번역에서 제외할 확장자:"))
         self.exclude_extensions_input = QLineEdit()
         self.exclude_extensions_input.setPlaceholderText("예: jpg,png,mp3,wav (쉼표로 구분)")
-        exclude_ext_layout.addWidget(self.exclude_extensions_input, 1)
+        self.exclude_extensions_input.setFixedWidth(300)  # 입력창 너비 고정
+        exclude_ext_layout.addWidget(self.exclude_extensions_input)
+        exclude_ext_layout.addStretch(1)  # 남은 공간을 채우기 위한 스트레치 추가
         file_layout.addLayout(exclude_ext_layout)
         
         # 파일 탐색 설정 (체크박스들을 한 줄에 배치)
@@ -424,12 +426,13 @@ class TranslationApp(QMainWindow):
         select_all_layout.addWidget(self.select_all_checkbox)
         select_all_layout.addStretch(1)
         files_layout.addLayout(select_all_layout)
-
+        
+        #1200 1000 800
         self.files_tree = QTreeWidget()
-        self.files_tree.setHeaderLabels(["경로", "이름", "유형"])
-        self.files_tree.setColumnWidth(0, 400)  # 경로 컬럼 너비 증가
-        self.files_tree.setColumnWidth(1, 300)  # 이름 컬럼 너비 설정
-        self.files_tree.header().setSectionResizeMode(2, QHeaderView.Stretch)
+        self.files_tree.setHeaderLabels(["유형", "경로", "이름"])
+        self.files_tree.setColumnWidth(0, 60)   # 유형 컬럼 너비 증가
+        self.files_tree.setColumnWidth(1, 380)  # 경로 컬럼 너비 조정
+        self.files_tree.setColumnWidth(2, 380)  # 이름 컬럼 너비 조정
         self.files_tree.setAlternatingRowColors(True)
         
         files_layout.addWidget(self.files_tree)
@@ -598,10 +601,11 @@ class TranslationApp(QMainWindow):
             self.files_tree.clear()
             
             # 헤더 레이블 순서 변경
-            self.files_tree.setHeaderLabels(["경로", "이름", "유형"])
-            self.files_tree.setColumnWidth(0, 400)  # 경로 컬럼 너비 증가
-            self.files_tree.setColumnWidth(1, 300)  # 이름 컬럼 너비 설정
-            self.files_tree.header().setSectionResizeMode(2, QHeaderView.Stretch)
+            self.files_tree.setHeaderLabels(["유형", "경로", "이름"])
+            self.files_tree.setColumnWidth(0, 60)   # 유형 컬럼 너비 증가
+            self.files_tree.setColumnWidth(1, 380)  # 경로 컬럼 너비 조정
+            self.files_tree.setColumnWidth(2, 380)  # 이름 컬럼 너비 조정
+            self.files_tree.setAlternatingRowColors(True)
             
             # 제외할 확장자 목록 가져오기
             exclude_extensions_text = self.exclude_extensions_input.text().strip().lower()
@@ -698,18 +702,18 @@ class TranslationApp(QMainWindow):
             # 선택된 파일 목록 업데이트
             self.selected_files = all_items
             
-            # 트리 위젯에 파일 목록 추가 (경로를 앞에 표시)
+            # 트리 위젯에 파일 목록 추가 (유형을 앞에 표시)
             for item in all_items:
                 display_path = item['display_path']
-                tree_item = QTreeWidgetItem([display_path, item['name'], item['type']])
+                tree_item = QTreeWidgetItem([item['type'], display_path, item['name']])
                 
                 # 아이콘 설정
                 if item['type'] == 'folder':
-                    tree_item.setIcon(1, self.style().standardIcon(QStyle.SP_DirIcon))
+                    tree_item.setIcon(0, self.style().standardIcon(QStyle.SP_DirIcon))  # 아이콘 위치를 0번 컬럼으로 변경
                 else:
-                    tree_item.setIcon(1, self.style().standardIcon(QStyle.SP_FileIcon))
+                    tree_item.setIcon(0, self.style().standardIcon(QStyle.SP_FileIcon))  # 아이콘 위치를 0번 컬럼으로 변경
                 
-                tree_item.setCheckState(0, Qt.Checked)  # 기본적으로 체크된 상태로 설정
+                tree_item.setCheckState(0, Qt.Checked)  # 체크박스는 첫 번째 컬럼에 유지
                 self.files_tree.addTopLevelItem(tree_item)
             
             # 전체 선택 체크박스 상태 업데이트
@@ -739,9 +743,9 @@ class TranslationApp(QMainWindow):
         for i in range(root.childCount()):
             item = root.child(i)
             if item.checkState(0) == Qt.Checked:
-                display_path = item.text(0)
-                item_name = item.text(1)
-                item_type = item.text(2)
+                item_type = item.text(0)  # 유형
+                display_path = item.text(1)  # 경로
+                item_name = item.text(2)  # 이름
                 
                 # selected_files 배열에서 일치하는 항목 찾기
                 for file_item in self.selected_files:
